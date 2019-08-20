@@ -8,10 +8,10 @@ mod sheet;
 mod workbook;
 
 pub use {
-    cell::{Cell, ColumnIndex, Number},
+    cell::{Cell, ColIndex, Number},
     context::Context,
     excel::Excel,
     row::{Row, RowIndex},
-    sheet::{Sheet, SheetIndex},
+    sheet::{MergeCell, Sheet, SheetIndex},
     workbook::Workbook,
 };

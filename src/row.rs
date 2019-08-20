@@ -3,7 +3,7 @@ use std::{borrow::Cow, collections::HashMap};
 use serde::Serialize;
 
 use crate::{
-    cell::{Cell, Cells, ColumnIndex, Number},
+    cell::{Cell, Cells, ColIndex, Number},
     context::Context,
 };
 
@@ -14,7 +14,7 @@ pub(crate) struct Rows {
 }
 
 #[derive(Default, Eq, PartialEq, Hash, Copy, Clone, Serialize)]
-pub struct RowIndex(usize);
+pub struct RowIndex(pub usize);
 
 #[derive(Serialize)]
 pub struct Row {
@@ -51,11 +51,11 @@ impl Row {
     pub fn set_str_cell<V: Into<Cow<'static, str>>>(
         &mut self,
         context: &mut Context,
-        column_index: ColumnIndex,
+        col_index: ColIndex,
         cell_value: V,
     ) -> &mut Cell {
         self.cells
-            .set_str_cell(context, column_index, cell_value.into())
+            .set_str_cell(context, col_index, cell_value.into())
     }
 
     pub fn add_num_cell(&mut self, context: &mut Context, cell_value: Number) -> &mut Cell {
@@ -65,9 +65,9 @@ impl Row {
     pub fn set_num_cell(
         &mut self,
         context: &mut Context,
-        column_index: ColumnIndex,
+        col_index: ColIndex,
         cell_value: Number,
     ) -> &mut Cell {
-        self.cells.set_num_cell(context, column_index, cell_value)
+        self.cells.set_num_cell(context, col_index, cell_value)
     }
 }

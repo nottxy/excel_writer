@@ -2,14 +2,17 @@ use std::borrow::Cow;
 
 use serde::Serialize;
 
-use crate::row::{Row, RowIndex, Rows};
+use crate::{
+    cell::ColIndex,
+    row::{Row, RowIndex, Rows},
+};
 
 #[derive(Default)]
 pub(crate) struct Sheets {
     pub(crate) sheets: Vec<Sheet>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Eq, PartialEq, Copy, Clone, Hash)]
 pub struct SheetIndex(pub usize);
 
 #[derive(Serialize)]
@@ -17,6 +20,15 @@ pub struct Sheet {
     pub(crate) index: SheetIndex,
     pub(crate) name: Cow<'static, str>,
     pub(crate) rows: Rows,
+    pub(crate) merge_cells: Vec<MergeCell>,
+}
+
+#[derive(Serialize)]
+pub struct MergeCell {
+    pub from_row_index: RowIndex,
+    pub from_col_index: ColIndex,
+    pub to_row_index: RowIndex,
+    pub to_col_index: Option<ColIndex>,
 }
 
 impl Sheets {
@@ -31,6 +43,7 @@ impl Sheets {
             index: SheetIndex(index),
             name,
             rows: Rows::default(),
+            merge_cells: Vec::default(),
         });
 
         self.sheets.last_mut().unwrap()
@@ -44,5 +57,9 @@ impl Sheet {
 
     pub fn get_row(&mut self, row_index: RowIndex) -> &mut Row {
         self.rows.get_row(row_index)
+    }
+
+    pub fn set_merge_cell(&mut self, merge_cell: MergeCell) {
+        self.merge_cells.push(merge_cell);
     }
 }

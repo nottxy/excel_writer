@@ -3,14 +3,14 @@ use std::{borrow::Cow, collections::HashMap};
 use excel_column_id::ColumnId;
 
 use crate::{
-    cell::ColumnIndex,
+    cell::ColIndex,
     shared_strings::{SharedStringIndex, SharedStrings},
 };
 
 #[derive(Default)]
 pub struct Context {
     pub(crate) shared_strings: SharedStrings,
-    pub(crate) column_ids_cache: HashMap<ColumnIndex, ColumnId>,
+    pub(crate) column_ids_cache: HashMap<ColIndex, ColumnId>,
 }
 
 impl Context {
@@ -18,9 +18,9 @@ impl Context {
         self.shared_strings.insert(value)
     }
 
-    pub(crate) fn add_column_index(&mut self, column_index: ColumnIndex) {
+    pub(crate) fn add_col_index(&mut self, col_index: ColIndex) {
         self.column_ids_cache
-            .entry(column_index)
-            .or_insert_with(|| ColumnId::from(column_index.0 + 1));
+            .entry(col_index)
+            .or_insert_with(|| ColumnId::from(col_index.0 + 1));
     }
 }

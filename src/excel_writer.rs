@@ -73,6 +73,20 @@ pub(crate) fn write_to<W: Write + Seek>(
 
     let sheets = &excel.workbook.sheets.sheets;
 
+    let mut sheets_max_col_index = HashMap::with_capacity(sheets.len());
+    for sheet in sheets {
+        let mut max_col_index = 0;
+        for row in sheet.rows.rows.values() {
+            if row.cells.next_col_index.0 > max_col_index {
+                max_col_index = row.cells.next_col_index.0;
+            }
+        }
+        if max_col_index > 0 {
+            max_col_index -= 1;
+        }
+        sheets_max_col_index.insert(sheet.index, max_col_index);
+    }
+
     {
         let context = Context::new();
         write_zip_file("_rels/.rels", None, context, &mut zip_writer, file_options)?;
@@ -105,6 +119,11 @@ pub(crate) fn write_to<W: Write + Seek>(
         let mut context = Context::new();
         context.insert("rows", &sheet.rows);
         context.insert("column_ids_cache", &excel_context.column_ids_cache);
+
+        let max_col_index = sheets_max_col_index.get(&sheet.index).unwrap_or(&0);
+        context.insert("map_col_index", max_col_index);
+        context.insert("merge_cells_len", &sheet.merge_cells.len());
+        context.insert("merge_cells", &sheet.merge_cells);
 
         let zip_file_name = format!("xl/worksheets/sheet{}.xml", sheet.index.0 + 1);
         write_zip_file(
@@ -180,7 +199,7 @@ fn write_zip_file<W: Write + Seek>(
     zip_writer: &mut ZipWriter<W>,
     file_options: FileOptions,
 ) -> Result<()> {
-    let file_content = match TPLS.render(tpl_file_name, &context) {
+    let file_content = match TPLS.render(tpl_file_name, context) {
         Ok(file_content) => file_content,
         Err(err) => {
             return Err(Error::new(ErrorKind::InvalidData, format!("{:?}", err)));
@@ -193,14 +212,14 @@ fn write_zip_file<W: Write + Seek>(
     zip_writer.write_all(file_content.as_bytes())
 }
 
-fn cell_type(value: Value, _: HashMap<String, Value>) -> tera::Result<Value> {
+fn cell_type(value: &Value, _: &HashMap<String, Value>) -> tera::Result<Value> {
     let new_value = match value {
         Value::String(string_value) => match string_value.as_str() {
             "String" => Value::String("s".into()),
             "Number" => Value::String("n".into()),
-            _ => Value::String(string_value),
+            _ => Value::String("inlineStr".into()),
         },
-        _ => value,
+        _ => value.clone(),
     };
 
     Ok(new_value)

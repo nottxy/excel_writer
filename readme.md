@@ -38,6 +38,8 @@ excel.write_to_file(&context, "demo.xlsx")?;
 * Add Sheet
 * Add Row
 * Set Cell
+    * String Cell
+    * Number Cell
 * Merge cells
 
 ## License
