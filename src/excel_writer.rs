@@ -199,7 +199,7 @@ fn write_zip_file<W: Write + Seek>(
     zip_writer: &mut ZipWriter<W>,
     file_options: FileOptions,
 ) -> Result<()> {
-    let file_content = match TPLS.render(tpl_file_name, context) {
+    let file_content = match TPLS.render(tpl_file_name, &context) {
         Ok(file_content) => file_content,
         Err(err) => {
             return Err(Error::new(ErrorKind::InvalidData, format!("{:?}", err)));
