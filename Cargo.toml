@@ -1,6 +1,6 @@
 [package]
 name = "excel_writer"
-version = "0.2.0"
+version = "0.2.1"
 license = "MIT"
 authors = ["Bob <nottxy@gmail.com>"]
 description = "Wild Excel Writer"
