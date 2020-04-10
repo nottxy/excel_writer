@@ -1,1 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="2" uniqueCount="1">    {% for index in range(end=string_len) %}    {% set string = strings[index] %}    {% if string %}    <si>        <t>{{ string }}</t>    </si>    {% endif %}    {% endfor %}</sst>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="2" uniqueCount="1">
+    {% for index in range(end=string_len) %}
+    {% set string = strings[index] %}
+    <si>
+        <t>{{ string }}</t>
+    </si>
+    {% endfor %}
+</sst>
