@@ -27,6 +27,7 @@ pub(crate) enum CellType {
 }
 
 #[derive(Serialize)]
+#[serde(untagged)]
 pub enum Number {
     I8(i8),
     U8(u8),
